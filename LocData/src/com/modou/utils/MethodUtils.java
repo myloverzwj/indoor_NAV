@@ -91,8 +91,15 @@ public class MethodUtils {
 		int green=color>>8&255;
 		int red=color>>16&255;
 		
+		float r = red*1.0f/255;
+		float g = green*1.0f/255;
+		float b = blue*1.0f/255;
 		//RGBA
-		float[] colors = new float[] { red*1.0f/255, green*1.0f/255, blue*1.0f/255, 0f };
+		float[] colors = new float[] { 
+				r, g, b, 0f,
+				r, g, b, 0f,
+				r, g, b, 0f,
+				r, g, b, 0f };
 		return colors;
 	}
 	

@@ -1,17 +1,17 @@
 package com.modou.fragment;
 
-import java.util.List;
-
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.modou.loc.BuildSelActivity;
+import com.modou.loc.CitySelActivity;
+import com.modou.loc.HotPointActivity;
 import com.modou.loc.MainUIActivity;
 import com.modou.loc.R;
-import com.modou.loc.adapter.AroundWifiAdapter;
 import com.modou.loc.data.transfer.DataTransferMgr2;
-import com.modou.loc.entity.WifiEntity;
-import com.modou.loc.receiver.WifiReceiver;
-import com.modou.utils.MLog;
+import com.modou.utils.StorageUtil;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -20,20 +20,17 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.ListView;
+import android.widget.TextView;
 
 public class FeatureFragment extends BaseFragment {
 
-	private View layerBtnOpenWifi;
 	private View layerBtnOpenCarMode;
-	private View layerContentWifi;
-	private View layerNoWifiArea;
-	private CheckBox checkBoxWifiState;
 	private CheckBox checkBoxCarModeState;
-	private ListView wifiListView;
-	private AroundWifiAdapter mAdapter;
-	private WifiReceiver wifiReceiver;
-	private WifiManager mWifiMgr;
+	
+	private View layerCitySel;
+	private View layerHotPointType;
+	private TextView txtViewCitySel;
+	private TextView txtViewHotPointSel;
 	
 	private boolean isWifiOpen; // wifi是否打开
 	private boolean isCarModeOpen; // 是否开启车载模式
@@ -41,7 +38,7 @@ public class FeatureFragment extends BaseFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View v = inflater.inflate(R.layout.fragment_feature, container, false);
+		View v = inflater.inflate(R.layout.fragment_build_type_sel, container, false);
 		return v;
 	}
 	
@@ -51,48 +48,13 @@ public class FeatureFragment extends BaseFragment {
 		initView();
 		initData();
 	}
-	
-	@Override
-	public void onResume() {
-		addReceiver();
-		super.onResume();
-	}
-
-	private void addReceiver() {
-		wifiReceiver = new WifiReceiver(getActivity()) {
-			
-			@Override
-			public void scanResults(List<WifiEntity> result) {
-				if (mAdapter == null) {
-					mAdapter = new AroundWifiAdapter(getActivity(), result);
-					wifiListView.setAdapter(mAdapter);
-				} else {
-					mAdapter.resetData(result);
-				}
-			}
-		};
-		
-	}
 
 	private void initView() {
-		wifiListView = (ListView) getView().findViewById(R.id.listview_wifi);
 		setLeftBtnImg(R.drawable.ic_sliding_menu);
 		setRightBtnImg(R.drawable.icon_recommend);
-		layerBtnOpenWifi = getView().findViewById(R.id.layer_btn_open_wifi);
-		layerBtnOpenWifi.setOnClickListener(this);
+		setTxtTitle(R.string.app_name);
 		layerBtnOpenCarMode = getView().findViewById(R.id.layer_btn_open_car_mode);
 		layerBtnOpenCarMode.setOnClickListener(this);
-		layerContentWifi = getView().findViewById(R.id.layer_wifi_content);
-		layerNoWifiArea = getView().findViewById(R.id.layer_no_wifi_area);
-		checkBoxWifiState = (CheckBox) getView().findViewById(R.id.checkbox_wifi_open_state);
-		checkBoxWifiState.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				isWifiOpen = isChecked;
-				setCheckBoxWifiState(isWifiOpen);
-				setWifiShowViewState(isWifiOpen);
-			}
-		});
 		checkBoxCarModeState = (CheckBox) getView().findViewById(R.id.checkbox_car_mode_open_state);
 		checkBoxCarModeState.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
@@ -101,10 +63,25 @@ public class FeatureFragment extends BaseFragment {
 				setCheckBoxOpenModeState(isCarModeOpen);
 			}
 		});
+		layerCitySel = getView().findViewById(R.id.layer_city_sel);
+		layerCitySel.setOnClickListener(this);
+		layerHotPointType = getView().findViewById(R.id.layer_hotline_sel);
+		layerHotPointType.setOnClickListener(this);
+		getView().findViewById(R.id.txtview_city_title).setOnClickListener(this);
+		getView().findViewById(R.id.txtview_city_sel_name).setOnClickListener(this);
+		getView().findViewById(R.id.txtview_hotbuild_title).setOnClickListener(this);
+		getView().findViewById(R.id.txtview_hotpoint_sel_name).setOnClickListener(this);
+		// 设置自定义字体
+		Typeface fontFace = Typeface.createFromAsset(getActivity().getAssets(),
+				"fonts/ultralight.ttf");
+		txtViewCitySel = (TextView) getView().findViewById(R.id.txtview_city_sel_name);
+		txtViewCitySel.setTypeface(fontFace);
+		txtViewHotPointSel = (TextView) getView().findViewById(R.id.txtview_hotpoint_sel_name);
+		txtViewHotPointSel.setTypeface(fontFace);
 	}
 	
 	private void initData() {
-		mWifiMgr = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
+		WifiManager mWifiMgr = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
 		isWifiOpen = mWifiMgr.isWifiEnabled();	//获取当前wifi状态(开、关)
 		
 		// 目前修改为客户端启动时，检测是否开启wifi模块，如果没有开启，则强制开启。
@@ -112,16 +89,20 @@ public class FeatureFragment extends BaseFragment {
 			mWifiMgr.setWifiEnabled(true);
 		}
 		
-		checkBoxWifiState.setChecked(isWifiOpen);
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
 		
+		String citySel = StorageUtil.getCitySel(getActivity());
+		txtViewCitySel.setText(citySel);
+		String hotPointSel = StorageUtil.getHotBuild(getActivity());
+		txtViewHotPointSel.setText(hotPointSel);
 	}
 	
 	@Override
 	public void onPause() {
-		if (wifiReceiver != null) {
-			getActivity().unregisterReceiver(wifiReceiver);
-			mAdapter = null; // 销毁广播后，将数据适配器也释放掉
-		}
 		super.onPause();
 	}
 
@@ -134,25 +115,19 @@ public class FeatureFragment extends BaseFragment {
 			MainUIActivity mainAty = (MainUIActivity) getActivity();
 			SlidingMenu slidingMenu = mainAty.getSlidingMenu();
 			slidingMenu.showMenu(true);
-		} else if (viewId == R.id.layer_btn_open_wifi) {
-			isWifiOpen = !isWifiOpen;
-			mWifiMgr.setWifiEnabled(isWifiOpen);
-			setWifiShowViewState(isWifiOpen);
-			setCheckBoxWifiState(isWifiOpen);
 		} else if (viewId == R.id.layer_btn_open_car_mode) {
 			isCarModeOpen = !isCarModeOpen;
 			setCheckBoxOpenModeState(isCarModeOpen);
+		} else if (viewId == R.id.layer_city_sel || viewId == R.id.txtview_city_title || viewId == R.id.txtview_city_sel_name) {
+			Intent intent = new Intent(getActivity(), CitySelActivity.class);
+			startActivity(intent);
+		} else if (viewId == R.id.layer_hotline_sel || viewId == R.id.txtview_hotbuild_title || viewId == R.id.txtview_hotpoint_sel_name) {
+			Intent intent = new Intent(getActivity(), HotPointActivity.class);
+			startActivity(intent);
 		} else if (viewId == R.id.btn_right) {
 			//TODO 右侧按钮点击事件
 		}
-	}
-	
-	/**
-	 * 设置wifi CheckBox组件的显示状态
-	 * @param checked	是否选中
-	 */
-	private void setCheckBoxWifiState(boolean checked) {
-		checkBoxWifiState.setChecked(checked);
+		
 	}
 	
 	/**
@@ -162,20 +137,6 @@ public class FeatureFragment extends BaseFragment {
 	private void setCheckBoxOpenModeState(boolean checked) {
 		checkBoxCarModeState.setChecked(checked);
 		DataTransferMgr2.getInstance().setCarModeOpen(checked);
-	}
-	
-	/**
-	 * 根据wifi当前的状态，来显示或隐藏当前容器
-	 * @param checked
-	 */
-	private void setWifiShowViewState(boolean checked) {
-		if (checked) {
-			layerContentWifi.setVisibility(View.VISIBLE);
-			layerNoWifiArea.setVisibility(View.GONE);
-		} else {
-			layerContentWifi.setVisibility(View.GONE);
-			layerNoWifiArea.setVisibility(View.VISIBLE);
-		}
 	}
 	
 }

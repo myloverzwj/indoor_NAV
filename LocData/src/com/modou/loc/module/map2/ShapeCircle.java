@@ -109,22 +109,18 @@ public class ShapeCircle extends GraphicsObject {
 		
 		// 顶点颜色值数组，每个顶点4个色彩值RGBA
 		int count = 0;
-        float colors[]=new float[vCount*4];
-        colors[count++] = 1; 
-        colors[count++] = 1; 
-        colors[count++] = 1; 
-        colors[count++] = 0;
-        for(int i=4; i<colors.length; i+=4){
-        	colors[count++] = 1; 
-        	colors[count++] = 0; 
-        	colors[count++] = 0; 
-        	colors[count++] = 0;
+        float color[]=new float[vCount*4];
+        for(int i=0; i<color.length; i+=4){
+        	color[count++] = colors[0]; 
+        	color[count++] = colors[1]; 
+        	color[count++] = colors[2]; 
+        	color[count++] = 0;
         }
 		// 创建顶点着色数据缓冲
-		ByteBuffer cbb = ByteBuffer.allocateDirect(colors.length * 4);
+		ByteBuffer cbb = ByteBuffer.allocateDirect(color.length * 4);
 		cbb.order(ByteOrder.nativeOrder()); // 设置字节顺序
 		mColorBuffer = cbb.asFloatBuffer(); // 转换为Float型缓冲
-		mColorBuffer.put(colors); // 向缓冲区中放入顶点着色数据
+		mColorBuffer.put(color); // 向缓冲区中放入顶点着色数据
 		mColorBuffer.position(0); // 设置缓冲区起始位置
 	}
 	
@@ -145,7 +141,6 @@ public class ShapeCircle extends GraphicsObject {
 		// 为画笔指定顶点着色数据
 		GLES20.glVertexAttribPointer(maColorHandle, 4, GLES20.GL_FLOAT, false,
 				4 * 4, mColorBuffer);
-//		GLES20.glUniform4fv(maColorHandle, 1, colors, 0);
 		// 允许顶点位置数据数组
 		GLES20.glEnableVertexAttribArray(maPositionHandle);
 		

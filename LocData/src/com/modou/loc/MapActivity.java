@@ -19,6 +19,7 @@ import com.modou.widget.BuildSelPopupWin;
 
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -37,6 +38,7 @@ public class MapActivity extends BaseActivity {
 	// 标题组件
 	private TextView txtTitle;
 	private BuildSelPopupWin buildSelPopWin;
+//	private Button btnFloorSel;
 	private List<Building> datas;
 	
 	
@@ -45,20 +47,23 @@ public class MapActivity extends BaseActivity {
 	private WifiDataTask wifiDataTask;
 	private SensorDataTask sensorDataTask;
 	
+	private Building building;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.fragment_category);
-
+		building = getIntent().getParcelableExtra("Building");
+		
 		initView();
 		initData();
 	}
 	
 	private void initView() {
 		setLeftBtn(R.drawable.btn_back_bg, R.string.back);
-//		setRightBtn(R.drawable.btn_confirm_bg, R.string.locationing);
-		txtTitle = setTxtTitle(R.string.loc_navigation);
+//		btnFloorSel = setRightBtnImg(R.drawable.icon_ar_popup_normal);
+		txtTitle = setTxtTitle(building.getName());
 		txtTitle.setOnClickListener(this);
 		
 		mSurfaceView = new ShowSurfaceView(this);
@@ -81,6 +86,9 @@ public class MapActivity extends BaseActivity {
 		MapConfig.getInstance().init(getApplicationContext());
 		MLog.d("=======11111=========" + DBDao.getInstance());
 		//TODO ====测试数据=====
+		if (DBDao.getInstance() == null) {
+			DBDao.init(getApplicationContext());
+		}
 		boolean isExist = DBDao.getInstance().isHasDatas("1000020");
 		if (!isExist) {
 			DBDao.getInstance().addShop("1000020", "地图1", "www.baidu.com");
@@ -92,7 +100,7 @@ public class MapActivity extends BaseActivity {
 			Building build = datas.get(0);
 			String buildId = build.getId();
 			String buildName = build.getName();
-			setTitleName(buildName);
+//			setTitleName(buildName);
 			MapConfig.getInstance().setBuildID(buildId);
 			MapConfig.getInstance().initMapData();
 			
@@ -130,23 +138,34 @@ public class MapActivity extends BaseActivity {
 		Floor fl = datas.get(0);
 		fl.setSelected(true);
 		
-    	final Button btnSel = (Button) findViewById(R.id.btn_sel);
-		ListView listview = (ListView) findViewById(R.id.listview_floor);
+		final Button btnFloorSel = (Button) findViewById(R.id.btn_sel);
+		final ListView listview = (ListView) findViewById(R.id.listview_floor);
 		final FloorAdapter adapter = new FloorAdapter(this, datas);
 		listview.setAdapter(adapter);
+		listview.setVisibility(View.GONE);
 		listview.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				Floor fl = datas.get(position);
 				String text = fl.getName();
-				btnSel.setText(text);
+				btnFloorSel.setText(text);
 				
 				// 更改选中颜色
 				adapter.setSelectItem(position);
 				mSurfaceView.changeFloor(fl.getId());
+				
+				listview.setVisibility(View.GONE);
 			}
 			
+		});
+		
+    	btnFloorSel.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				int vF = listview.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE;
+				listview.setVisibility(vF);
+			}
 		});
 	}
 	
@@ -177,8 +196,10 @@ public class MapActivity extends BaseActivity {
 	public void startLoc() {
 		wifiDataTask = new WifiDataTask(this);
 		wifiDataTask.start();
+		
 		sensorDataTask = new SensorDataTask(this);
 		sensorDataTask.start();
+		
 		DataTransferMgr2.getInstance().init(mSurfaceView);
 		DataTransferMgr2.getInstance().start();
 	}

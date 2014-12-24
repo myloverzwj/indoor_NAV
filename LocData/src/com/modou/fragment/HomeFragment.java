@@ -49,19 +49,19 @@ public class HomeFragment extends BaseFragment {
 	
 	private void initData() {
 		tabTxtViewArr = new String[] { getString(R.string.tab1), 
-				   						getString(R.string.tab2),
+				   						/*getString(R.string.tab2),*/
 				   						getString(R.string.tab3),
 				   						getString(R.string.tab4),
 				   						getString(R.string.tab5)
 									 };
 		tabImgArr = new int[] { R.drawable.tab_icon_scanresult,
-				  				R.drawable.tab_icon_map,
+				  				/*R.drawable.tab_icon_map,*/
 				  				R.drawable.tab_icon_security,
 				  				R.drawable.tab_icon_tools,
 				  				R.drawable.tab_icon_more
 				 			  };
 		fragmentArr = new Class[] { FeatureFragment.class, 
-									CategoryFragment.class,
+									/*CategoryFragment.class,*/
 									PersonalFragment.class,
 									CollectFragment.class,
 									MoreFragment.class

@@ -4,16 +4,17 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import com.modou.loc.MapActivity;
-import com.modou.loc.data.transfer.DataTransferMgr2;
 import com.modou.loc.module.map2.config.CoordUtil;
 import com.modou.loc.module.map2.config.MapConfig;
 import com.modou.utils.MLog;
+import com.modou.utils.MethodUtils;
 import com.modou.utils.PhoneInfoUtils;
 
 import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
-import android.opengl.Matrix;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 /**
@@ -37,7 +38,7 @@ public class SceneRenderer implements Renderer {
 	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 		//设置屏幕背景色RGBA
-        GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);  
+        GLES20.glClearColor(0.9f, 0.9f, 0.9f, 1.0f);  
         MLog.d("SceneRender-----------------onSurfaceCreate---------------");
         //打开深度检测
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
@@ -45,7 +46,7 @@ public class SceneRenderer implements Renderer {
         GLES20.glEnable(GLES20.GL_CULL_FACE);
         
         // 创建地图场景对象
-        mMap = new Map(mContext);
+        mMap = new Map(mContext, this);
         triangle = new Triangle();
         
         PhoneInfoUtils.parseScreenInfo(mContext);
@@ -89,9 +90,9 @@ public class SceneRenderer implements Renderer {
 //        Log.d("mylog", "dx=====" + x + " ,dy===" + y);
 //        triangle.draw(MatrixState.getFinalMatrix());
         // 只有加载完毕后才进行绘制
-        if(mMap.isLoadOver()) {
+//        if(mMap.isLoadOver()) {
         	mMap.Draw(gl);
-        }
+//        }
         MatrixState.popMatrix();
 	}
 
@@ -150,5 +151,20 @@ public class SceneRenderer implements Renderer {
 	public String getCurMapFilePath() {
 		return mMap.getCurMapFileName();
 	}
-
+	
+	private Handler handler = new Handler(){
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			String info = (String) msg.obj;
+			MethodUtils.showToast(mContext, info);
+		}
+	};
+	
+	public void showMsg(String info) {
+		Message msg = handler.obtainMessage();
+		msg.obj = info;
+		handler.sendMessage(msg);
+	}
+	
 }

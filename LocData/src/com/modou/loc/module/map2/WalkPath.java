@@ -27,10 +27,14 @@ public class WalkPath extends GraphicsObject {
 	private float[] pointArr;
 	private int index;
 	
-	public WalkPath(Context ctx) {
+	private ShapeWalkHead shapeHead;
+	
+	public WalkPath(Context ctx, ShapeWalkHead head) {
 		super(ctx);
 		
+		shapeHead = head;
 		pointList = new ArrayList<Point>();
+		
 		
 		//TODO 测试数据
 //		addPoint(0.5f, -0.5f);
@@ -70,10 +74,10 @@ public class WalkPath extends GraphicsObject {
 			isInit = true;
 			// 顶点颜色值数组，每个顶点4个色彩值RGBA
 			float[] colors = new float[] {
-//				1, 1, 0, 0, // 黄
-//				1, 0, 0, 0, // 红
-//				1, 1, 0, 0, // 黄
-				1, 0, 0, 0 // 红
+				0, 0, 0, 0, // 黄
+				0, 0, 0, 0, // 红
+				0, 0, 0, 0, // 黄
+				0, 0, 0, 0 // 红
 			};
 			// 创建顶点着色数据缓冲
 			ByteBuffer cbb = ByteBuffer.allocateDirect(colors.length * 4);
@@ -113,9 +117,9 @@ public class WalkPath extends GraphicsObject {
 		GLES20.glEnableVertexAttribArray(maPositionHandle);
 		GLES20.glEnableVertexAttribArray(maColorHandle);
 		
-		GLES20.glLineWidth(5);//设置线的宽度
+		GLES20.glLineWidth(2);//设置线的宽度
 		
-		GLES20.glDrawArrays(GLES20.GL_POINTS, 0, vCount);
+		GLES20.glDrawArrays(GLES20.GL_LINE_STRIP, 0, vCount);
 	}
 
 	/**
@@ -135,21 +139,6 @@ public class WalkPath extends GraphicsObject {
 	 */
 	public void addPoint(float x, float y) {
 		addPoint(x, y, 0);
-	}
-	
-	/**
-	 * 添加用户行为轨迹点
-	 * @param p	新的轨迹点
-	 */
-	public void addPoint(Point p) {
-		//重新转换定位点坐标
-		float tx = CoordUtil.toGLX(p.getX());
-		float ty = CoordUtil.toGLY(p.getY());
-		p.setX(tx);
-		p.setY(ty);
-		pointList.add(p);
-		
-		initDrawData();
 	}
 	
 	public void updateUserTrack(Point[] pts) {
@@ -172,6 +161,24 @@ public class WalkPath extends GraphicsObject {
 		}
 	}
 	
+	/**
+	 * 添加用户行为轨迹点
+	 * @param p	新的轨迹点
+	 */
+	public void addPoint(Point p) {
+		//重新转换定位点坐标
+//		float tx = CoordUtil.toGLX(p.getX());
+//		float ty = CoordUtil.toGLY(p.getY());
+//		MLog.d("转换前的定位坐标x:" + p.getX() + " ,y:" + p.getY() + " ,转换后的坐标x:" + tx + " ,y:" + ty);
+//		p.setX(tx);
+//		p.setY(ty);
+		
+		
+		pointList.add(p);
+		
+		initDrawData();
+	}
+	
 	private void initDrawData() {
 		int size = pointList.size();
 		// 重新创建Float数组对象
@@ -186,6 +193,7 @@ public class WalkPath extends GraphicsObject {
 			pointArr[index++] = point.getZ();
 		}
 		
+//		shapeHead.updatePosition(pointList.get(pointList.size()-1));
 		initVertexData();
 	}
 

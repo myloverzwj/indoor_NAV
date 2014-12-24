@@ -1,0 +1,79 @@
+#ifndef PARTICLE_H
+#define PARTICLE_H
+#include <jni.h>
+#include "gauss.h"
+class particle
+{
+public:
+	particle(float x1,float y1,float width1);
+	~particle();
+	void change_xy(float l,float d);
+	void chang_width(float factor);
+	float get_width();
+	float get_x();
+	float get_y();
+	float get_xf();
+	float get_yf();
+	particle *get_next();
+	float width;
+	float x,y,x_f,y_f;
+	particle *next,*pre;
+private:
+	int ah;
+
+};
+
+particle::particle(float x1,float y1,float width1)
+{
+	x = x1;
+	y = y1;
+	width = width1;
+	next = 0;
+	pre=0;
+}
+
+float particle::get_width()
+{
+	return width;
+}
+
+float particle::get_x()
+{
+	return x;
+}
+float particle::get_y()
+{
+	return y;
+}
+float particle::get_xf()
+{
+	return x_f;
+}
+float particle::get_yf()
+{
+	return y_f;
+}
+
+void particle::change_xy(float l,float d)
+{
+	x_f = x;
+	y_f = y;
+	x = x+l*cos(d);
+	y = y+l*sin(d);
+
+}
+
+void particle::chang_width(float factor)
+{
+	width = width*factor;
+
+}
+
+particle *particle::get_next()
+{
+    return next;
+}
+particle::~particle()
+{
+}
+#endif

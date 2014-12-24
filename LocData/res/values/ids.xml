@@ -2,5 +2,13 @@
 <resources>
     
     <item name="selected_view" type="id"/>
+    <item type="id" name="mynormalbar">false</item>
+    <item type="id" name="map_coupon_layout">false</item>
+    <item type="id" name="map_jing_layout">false</item>
+    <item type="id" name="map_huo_layout">false</item>
+    <item type="id" name="map_mine_layout">false</item>
+    <item type="id" name="redpoint_mine">false</item>
+    <item type="id" name="hot_nearby">false</item>
+    <item type="id" name="redpoint_img">false</item>
     
 </resources>

@@ -24,7 +24,7 @@ import android.util.Log;
 
 public class MLog {
 	
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 	public static final boolean WRITE_FILE = false;
 	
 	public static final String TAG = "mylog";

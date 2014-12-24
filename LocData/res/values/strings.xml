@@ -2,7 +2,7 @@
 
     <string name="app_name">导航定位仪</string>
     <string name="btn_start_gointo">开启定位之旅</string>
-    <string name="tab1">信号</string>
+    <string name="tab1">热点</string>
     <string name="tab2">导航</string>
     <string name="tab3">周边</string>
     <string name="tab4">地图</string>
@@ -47,4 +47,6 @@
 	<string name="downloading">正在下载中&#8230;</string>
 	<string name="locationing">定位</string>
 	<string name="exit_app_msg">再按一次退出应用</string>
+	<string name="city_sel">城市选择</string>
+	<string name="hotpoint_type">热点类型</string>
 </resources>

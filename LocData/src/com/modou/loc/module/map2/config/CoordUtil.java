@@ -6,12 +6,13 @@ package com.modou.loc.module.map2.config;
  */
 public class CoordUtil {
 
-	private final static float ratio = 1f;
 	private static int screenWidth, screenHeight;
+	private static float ratio;
 	
 	public static void init(int screenW, int screenH) {
 		screenWidth = screenW;
 		screenHeight = screenH;
+		ratio = screenWidth*1.0f/screenHeight;
 	}
 
 	/**

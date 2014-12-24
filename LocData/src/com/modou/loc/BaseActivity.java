@@ -59,6 +59,14 @@ public class BaseActivity extends Activity implements OnClickListener {
 		return txt;
 	}
 	
+	protected TextView setTxtTitle(String msg) {
+		TextView txt = (TextView) findViewById(R.id.txtview_title);
+		if (txt != null) {
+			txt.setText(msg);
+		}
+		return txt;
+	}
+	
 	protected void showToast(String res) {
 		ToastUtils.show(this, res);
 	}

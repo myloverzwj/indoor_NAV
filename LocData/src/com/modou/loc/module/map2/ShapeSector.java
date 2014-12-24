@@ -39,9 +39,8 @@ public class ShapeSector extends ShapeArc {
 		GLES20.glVertexAttribPointer(maPositionHandle, 3, GLES20.GL_FLOAT, 
 						false, 3 * 4, mVertexBuffer);
 		// 为画笔指定顶点着色数据
-//		GLES20.glVertexAttribPointer(maColorHandle, 4, GLES20.GL_FLOAT, false,
-//				4 * 4, mColorBuffer);
-		GLES20.glUniform4fv(maColorHandle, 1, colors, 0);
+		GLES20.glVertexAttribPointer(maColorHandle, 4, GLES20.GL_FLOAT, false,
+				4 * 4, mColorBuffer);
 		// 允许顶点位置数据数组
 		GLES20.glEnableVertexAttribArray(maPositionHandle);
 		GLES20.glEnableVertexAttribArray(maColorHandle);

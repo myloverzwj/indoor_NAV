@@ -1,0 +1,98 @@
+package com.modou.loc;
+
+import com.modou.utils.Const;
+
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+
+/**
+ * @author 作者 E-mail: xyylchq@163.com
+ * @version 创建时间: 2014-6-3 下午3:46:55
+ * 类说明:
+ * 应用启动数据加载页面
+ */
+public class SplashActivity extends BaseActivity {
+
+	final long startTime = System.currentTimeMillis();
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		
+		setContentView(R.layout.activity_splash);
+		
+		checkGuideState();
+	}
+	
+	private void checkGuideState() {
+		SharedPreferences sp = getSharedPreferences(Const.SHARE_DATAS, MODE_PRIVATE);
+		boolean isFirstStart = sp.getBoolean(Const.IS_FIRST_START_APP, true);
+		isFirstStart = true;
+		if (isFirstStart) {
+			Editor editor = sp.edit();
+			editor.putBoolean(Const.IS_FIRST_START_APP, false);
+			editor.commit();
+			
+			Intent intent = new Intent(this, GuideActivity.class);
+			startActivityForResult(intent, Const.GUIDE_ACTIVITY_REQUEST_CODE);
+		} else {
+			initData();
+		}
+	}
+
+	private void initData() {
+		
+		// 数据加载任务类
+		new AsyncTask<Void, Void, Void>() {
+
+			@Override
+			protected Void doInBackground(Void... params) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			protected void onPostExecute(Void result) {
+				loadData();
+			}
+			
+		}.execute();
+	}
+
+	private void loadData() {
+		new AsyncTask<Void, Void, Void>() {
+
+			@Override
+			protected Void doInBackground(Void... params) {
+				return null;
+			}
+			
+			protected void onPostExecute(Void result) {
+				long useTime = System.currentTimeMillis() - startTime;
+				long delayMillis = 2000;
+				delayMillis = delayMillis < useTime ? 0 : delayMillis - useTime;
+				mHandler.sendEmptyMessageDelayed(0, delayMillis);
+			}
+			
+		}.execute();
+	}
+	
+	private final Handler mHandler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			
+			showContentLayer();
+		}
+	};
+	
+	private void showContentLayer() {
+		Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+		startActivity(intent);
+		finish();
+	}
+}

@@ -77,7 +77,13 @@
         <activity android:name=".IndoorMapActivity" />
         <activity android:name=".MapActivity"
             android:screenOrientation="portrait" />
-
+        <activity android:name=".BuildSelActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".CitySelActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".HotPointActivity"
+            android:screenOrientation="portrait" />
+        
         <service
             android:name="com.modou.loc.service.LocService"
             android:exported="false" >

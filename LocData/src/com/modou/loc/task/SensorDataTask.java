@@ -31,6 +31,7 @@ public class SensorDataTask {
 	private Timer timer;
 	private TimerTask task;
 	public static final int DELAY_PER = 10;// 100Hz发送一次
+	private boolean isCancel;
 	
 	public SensorDataTask (Context ctx) {
 		this.mContext = ctx;
@@ -42,6 +43,7 @@ public class SensorDataTask {
 	}
 	
 	public void start() {
+		isCancel = false;
 		SensorMgr.getInstance().init(mContext);
 		
 		timer = new Timer();
@@ -53,6 +55,7 @@ public class SensorDataTask {
 	}
 
 	public void cancel() {
+		isCancel = true;
 		SensorMgr.getInstance().gc();
 		
 		if (timer != null) {
@@ -68,6 +71,8 @@ public class SensorDataTask {
 	class SensorTimerTask extends TimerTask {
 		@Override
 		public void run() {
+			if (isCancel)
+				return;
 			SensorMgr.getInstance().addSensorData();
 		}
 	}

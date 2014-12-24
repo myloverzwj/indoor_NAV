@@ -104,4 +104,23 @@ e</style>
         <item name="android:textColor">#ffffffff</item>
     </style>
 
+    <style name="BottomBarTextStyle">
+        <item name="android:textSize">14.0dip</item>
+        <item name="android:textColor">#ff333333</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:shadowColor">#ffffffff</item>
+        <item name="android:shadowDx">1.0</item>
+        <item name="android:shadowDy">1.0</item>
+        <item name="android:shadowRadius">1.0</item>
+    </style>
+    
+    <style name="build_sel_txt">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/font_size_20</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:clickable">true</item>
+    </style>
+    
 </resources>

@@ -503,7 +503,7 @@ extern "C" jobjectArray Java_com_modou_loc_data_transfer_DataTransferMgr2_getUse
     int a2=0;
     if(a1!=0&&particle_filter1.end==true)a2=particle_filter1.particles.head->an_num;
     LOGI("--------------%d,  %d ",a1,a2);
-	jsize pArrSize = a1+a2;			// 目前定义对象数组大小就为1，每次返回1个点
+	jsize pArrSize =a2;// a1+a2+1;			// 目前定义对象数组大小就为1，每次返回1个点
 	jclass pointCls = env->FindClass("com/modou/loc/module/map2/Point");
 	jobjectArray pointArr = env->NewObjectArray(pArrSize, pointCls, NULL);
 	jobject point;
@@ -511,18 +511,18 @@ extern "C" jobjectArray Java_com_modou_loc_data_transfer_DataTransferMgr2_getUse
 	jfieldID xID = env->GetFieldID(pointCls, "x", "F");
 	jfieldID yID = env->GetFieldID(pointCls, "y", "F");
 	particle_filter1.reset();
-	for (i = 0; i < a1; i++) {
-		point = (jobject) env->NewObject(pointCls, consID);
-		env->SetObjectArrayElement(pointArr, i, point);
-		env->SetFloatField(point, xID, particle_filter1.getx());
-		env->SetFloatField(point, yID, particle_filter1.gety());
-		particle_filter1.next();
-	}
+//	for (i = 0; i < a1; i++) {
+//		point = (jobject) env->NewObject(pointCls, consID);
+//		env->SetObjectArrayElement(pointArr, i, point);
+//		env->SetFloatField(point, xID, particle_filter1.getx());
+//		env->SetFloatField(point, yID, particle_filter1.gety());
+//		particle_filter1.next();
+//	}
 	LOGI("--------------%d,   ",a1);
 	particle_filter1.reset();
 	LOGI("--------------%d,   ",a1);
 	trail.reset();
-	for(;i<pArrSize&&particle_filter1.end==true;i++)
+	for(i=0;i<pArrSize&&particle_filter1.end==true;i++)
 	{
 		point = (jobject) env->NewObject(pointCls, consID);
 				env->SetObjectArrayElement(pointArr, i, point);
@@ -531,19 +531,16 @@ extern "C" jobjectArray Java_com_modou_loc_data_transfer_DataTransferMgr2_getUse
                 if(trail.get_NUM()<a2)
                 {
                 	trail.add(xx,yy);
+                	trail.reset();
+                	trail.next();
                 }
                 else
                 {
-                	if(i-a1>20)
-                	{
-                		xx=trail.get_CUR()->x;
-                		yy=(trail.get_CUR())->y;
-                	}
-                	else
-                	{
-                		trail.get_CUR()->x=xx;
-                		(trail.get_CUR())->y=yy;
-                	}
+
+
+                		xx=xx*expp(0.1*(float)i)+trail.get_CUR()->x*(1-expp(0.1*(float)i));
+                		yy=yy*expp(0.1*(float)i)+trail.get_CUR()->y*(1-expp(0.1*(float)i));
+
                      trail.next();
 
                 }

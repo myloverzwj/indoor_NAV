@@ -41,6 +41,7 @@ public class DBDao {
 		if (instance != null) {
 			instance.closeDB();
 		}
+		instance = null;
 	}
 	
 	/**

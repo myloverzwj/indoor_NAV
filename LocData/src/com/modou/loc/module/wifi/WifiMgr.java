@@ -87,6 +87,8 @@ public class WifiMgr {
 	 * @return
 	 */
 	public void addLocData() {
+		if (mContext == null)
+			return;
 		if (mWifiManager == null) {
 			mWifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
 		}

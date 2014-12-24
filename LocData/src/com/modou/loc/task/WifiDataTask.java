@@ -30,18 +30,20 @@ public class WifiDataTask {
 
 	private Timer timer;
 	private TimerTask task;
+	private boolean isCancel;
 
 	public WifiDataTask(Context ctx) {
 		this.mContext = ctx;
 
-//		try {
-//			init();
-//		} catch (FileNotFoundException e) {
-//			e.printStackTrace();
-//		}
+		try {
+			init();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void start() {
+		isCancel = false;
 		WifiMgr.getInstance().init(mContext);
 		timer = new Timer();
 		if (task != null) {
@@ -52,6 +54,7 @@ public class WifiDataTask {
 	}
 
 	public void cancel() {
+		isCancel = true;
 		if (timer != null) {
 			timer.cancel();
 		}
@@ -107,6 +110,8 @@ public class WifiDataTask {
 
 		@Override
 		public void run() {
+			if (isCancel)
+				return;
 			WifiMgr.getInstance().addLocData();
 		}
 		

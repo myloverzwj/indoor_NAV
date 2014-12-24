@@ -18,6 +18,10 @@ public class Const {
 	public static final String IS_AUTO_CHECK_UPDATE_VERSION = "is_auto_check_update_version";
 	/**是否接收最新消息*/
 	public static final String IS_ACCEPT_NEWS = "is_accept_news";
+	/**城市选择标识*/
+	public static final String CITY_SELECT = "city_select";
+	/**热点建筑物类型*/
+	public static final String HOT_BUILD_TYPE = "hot_build_type";
 	/** 引导页返回requestCode */
 	public static final int GUIDE_ACTIVITY_REQUEST_CODE = 1;
 	/**地图ID*/

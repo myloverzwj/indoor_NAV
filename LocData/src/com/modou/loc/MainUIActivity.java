@@ -7,6 +7,7 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.modou.fragment.HomeFragment;
 import com.modou.fragment.MenuFragment;
+import com.modou.loc.db.DBDao;
 import com.modou.loc.db.DBMgr;
 import com.modou.loc.entity.Building;
 import com.modou.utils.MethodUtils;
@@ -103,6 +104,7 @@ public class MainUIActivity extends SlidingFragmentActivity {
 	}
 	
 	private void existApp() {
+		DBDao.destory();
 		finish();
 	}
 }

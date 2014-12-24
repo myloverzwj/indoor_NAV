@@ -25,9 +25,12 @@ public abstract class GraphicsObject {
 	protected int muMVPMatrixHandle; // 总变换矩阵引用
 	protected int maPositionHandle; // 顶点位置属性引用
 	protected int maColorHandle; // 顶点颜色属性引用
+	protected int maTexCoorHandle; // 顶点纹理坐标属性引用id
+	protected int texId;			// 纹理图片ID
 	protected String mVertexShader; // 顶点着色器代码脚本
 	protected String mFragmentShader; // 片元着色器代码脚本
 	
+	protected FloatBuffer mTexCoorBuffer; // 顶点纹理坐标数据数据
 	protected FloatBuffer mVertexBuffer; // 顶点坐标数据缓冲
 	protected FloatBuffer mColorBuffer; // 顶点着色数据缓冲
 	protected int vCount; // 顶点数量
@@ -42,6 +45,13 @@ public abstract class GraphicsObject {
 	public GraphicsObject(Context ctx) {
 		this.mContext = ctx;
 		
+		// 默认颜色
+		colors = new float[] {
+				1, 0, 0, 0, // 黄
+				1, 0, 0, 0, // 红
+				1, 0, 0, 0, // 黄
+				1, 0, 0, 0 // 红
+		};
 		pointList = new ArrayList<Point>();
 		initShader(ctx);
 	}
@@ -111,6 +121,8 @@ public abstract class GraphicsObject {
 		mProgram = ShaderUtil.createProgram(mVertexShader, mFragmentShader);
 		// 创建程序中顶点位置属性引用id
 		maPositionHandle = GLES20.glGetAttribLocation(mProgram, "aPosition");
+		//获取程序中顶点纹理坐标属性引用id  
+        maTexCoorHandle= GLES20.glGetAttribLocation(mProgram, "aTexCoor");
 		// 获取程序中顶点颜色属性引用id
 		maColorHandle = GLES20.glGetAttribLocation(mProgram, "aColor"); //TODO 现在改成了vColor,之前是aColor,这样相当于取不到色值，默认就成了黑色，需更改
 		// 获取程序中总变换矩阵引用id

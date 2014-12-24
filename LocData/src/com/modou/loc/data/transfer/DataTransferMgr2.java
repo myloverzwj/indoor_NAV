@@ -6,6 +6,7 @@ import java.util.TimerTask;
 
 import android.hardware.Sensor;
 import android.net.wifi.WifiManager;
+import android.util.Log;
 
 import com.modou.loc.module.map2.Map;
 import com.modou.loc.module.map2.Point;
@@ -71,8 +72,12 @@ public class DataTransferMgr2 {
 	
 	/**关闭用户行走路线轨迹定位任务*/
 	public void cancel() {
-		task.cancel();
-		timer.cancel();
+		if (task != null) {
+			task.cancel();
+		}
+		if (timer != null) {
+			timer.cancel();
+		}
 		MLog.d("数据采集定时任务关闭");
 	}
 	

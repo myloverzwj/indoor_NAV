@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="black">#000000</color>
+    <color name="red">#ff0000</color>
+    <color name="white">#ffffff</color>
+    <color name="light_gray">#efefef</color>
+    <color name="gray">#999999</color>
+    <color name="gray_bg">#fff1f1f1</color>
+    <color name="divider_gray">#ffe0e0e0</color>
+    <color name="arrow_gray">#ff787878</color>
+    <color name="bg_main_color">#fff1f1f1</color>
+    <color name="jetblack">#333333</color>
+    <color name="rgb_666666">#666666</color>
+    <color name="rgb_cccccc">#cccccc</color>
+    <color name="text_color_2">#9c9c9c</color>
+    <color name="text_color_1">#313031</color>
+    <color name="transparent_background">#00000000</color>
+    <color name="rgb_e0eeee">#F5FFFA</color>
+    <color name="activity_bg">#ffe9e9e9</color>
+    <color name="fragment_bg">#ffebebeb</color>
+    <color name="pref_title_enabled">#ff323232</color>
+    <color name="pref_title_disabled">#ffcacaca</color>
+    <color name="summary_color">#ff858585</color>
+    <color name="pref_item_bg_pressed">#ff98d4f9</color>
+    <color name="pref_item_bg">#ffe9e9e9</color>
+    
+
+    <!-- 下面是无用颜色值 -->
+    <drawable name="red">#7f00</drawable>
+    <drawable name="blue">#770000ff</drawable>
+    <drawable name="green">#7700ff00</drawable>
+    <drawable name="yellow">#77ffff00</drawable>
+    <drawable name="screen_background_black">#ff000000</drawable>
+    <drawable name="translucent_background">#e0000000</drawable>
+
+    <color name="solid_red">#f00</color>
+    <color name="solid_blue">#0000ff</color>
+    <color name="solid_green">#f0f0</color>
+    <color name="solid_yellow">#ffffff00</color>
+
+</resources>

@@ -171,6 +171,50 @@ public class StorageUtil {
 		editor.commit();
 	}
 	
+	/**
+	 * 保存选中的城市ID
+	 * @param cityId
+	 */
+	public static void saveCitySel(Context ctx, String cityId) {
+		SharedPreferences sp = ctx.getSharedPreferences(Const.SHARE_DATAS, Context.MODE_PRIVATE);
+		Editor editor = sp.edit();
+		editor.putString(Const.CITY_SELECT, cityId);
+		editor.commit();
+	}
+	
+	/**
+	 * 获取选中的城市ID
+	 * @param ctx
+	 * @return
+	 */
+	public static String getCitySel(Context ctx) {
+		SharedPreferences sp = ctx.getSharedPreferences(Const.SHARE_DATAS, Context.MODE_PRIVATE);
+		String cityId = sp.getString(Const.CITY_SELECT, null);
+		return cityId;
+	}
+	
+	/**
+	 * 保存选中的建筑物热点类型
+	 * @param hotBuildName
+	 */
+	public static void saveHotBuild(Context ctx, String hotBuildName) {
+		SharedPreferences sp = ctx.getSharedPreferences(Const.SHARE_DATAS, Context.MODE_PRIVATE);
+		Editor editor = sp.edit();
+		editor.putString(Const.HOT_BUILD_TYPE, hotBuildName);
+		editor.commit();
+	}
+	
+	/**
+	 * 获取选中的建筑物热点类型
+	 * @param ctx
+	 * @return
+	 */
+	public static String getHotBuild(Context ctx) {
+		SharedPreferences sp = ctx.getSharedPreferences(Const.SHARE_DATAS, Context.MODE_PRIVATE);
+		String cityId = sp.getString(Const.HOT_BUILD_TYPE, null);
+		return cityId;
+	}
+	
 	/**获取图片的存储路径*/
 	public static String getImgSavePath(Context context) {
 		return Environment.getExternalStorageDirectory() + File.separator + SAVE_ROOT_PATH 
