@@ -1,0 +1,36 @@
+package com.modou.fragment;
+
+import com.modou.loc.R;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+public class MoreFragment extends BaseFragment {
+	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		View v = inflater.inflate(R.layout.fragment_more, container, false);
+		return v;
+	}
+	
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		initView();
+		initData();
+	}
+
+	private void initView() {
+//		setLeftBtnImg(R.drawable.icon_recommend);
+		setTxtTitle(R.string.more);
+	}
+
+	private void initData() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+}

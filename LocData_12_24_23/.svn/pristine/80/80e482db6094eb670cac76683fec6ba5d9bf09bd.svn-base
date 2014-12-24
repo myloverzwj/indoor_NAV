@@ -1,0 +1,44 @@
+#ifndef LINES_H
+#define LINES_H
+//#include <glut.h>
+#include <math.h>
+
+class lines
+{
+public:
+	lines(float points1[][2],int num1);
+	//float get_length();
+	//float get_width();
+	bool if_in(float x1,float x2);
+	//bool operator == (lines &lines1);
+	//void display();
+private:
+	float points[20][2];
+	int cur;
+	int num;
+};
+
+lines::lines(float points1[][2],int num1)
+{
+	for(int i=0;i<num;i++)
+	{
+		points[i][0]=points1[i][0];
+		points[i][1]=points1[i][1];
+	}
+	num=num1;
+
+}
+
+bool lines::if_in(float x1,float y1)
+{
+	float arg1=0;
+   for(int i=0;i<num;i++)
+   {
+	   arg1+=atan2(points[i][0]-x1,points[i][1]-y1);
+   }
+
+	if(arg1*arg1<3)return false;
+    else return true;
+}
+
+#endif

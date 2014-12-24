@@ -1,0 +1,11 @@
+<resources>
+
+    <string name="app_name">导航定位仪</string>
+    <string name="btn_start_gointo">开启定位之旅</string>
+    <string name="tab1">连接</string>
+    <string name="tab2">地图</string>
+    <string name="tab3">安全</string>
+    <string name="tab4">百宝箱</string>
+    <string name="tab5">更多</string>
+
+</resources>

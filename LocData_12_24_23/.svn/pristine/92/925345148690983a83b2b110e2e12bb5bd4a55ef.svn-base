@@ -1,0 +1,119 @@
+#ifndef SENSOR_DATA_H
+#define SENSOR_DATA_H
+
+#define  MAX 10000
+#include <math.h>
+
+class sensor_data
+{
+public:
+	sensor_data();
+	~sensor_data();
+	void setdata(float x1,float x2,float x3);
+	float LPF(int T);
+	float cal_max(int T);
+	float cal_DC(int T);
+	float cal_de(sensor_data &a);
+private:
+	float x[MAX],y[MAX],z[MAX],m[MAX];
+	float xl,yl,zl,ml;
+	int CUR;
+
+};
+
+sensor_data::sensor_data()
+{
+	CUR =0;
+
+}
+
+sensor_data::~sensor_data()
+{
+}
+
+void sensor_data::setdata(float x1,float x2,float x3)
+{
+	x[CUR]=x1;
+	y[CUR]=x2;
+	z[CUR]=x3;
+	m[CUR]=sqrt(x1*x1+x2*x2+x3*x3);
+	CUR++;
+	CUR=CUR%MAX;
+}
+float sensor_data::LPF(int T)
+{
+	xl=yl=zl=0;
+	ml=0;
+	for (int i=0;i<T;i++)
+	{
+		xl+=x[(CUR-i+MAX)%MAX];
+		yl+=y[(CUR-i+MAX)%MAX];
+		zl+=z[(CUR-i+MAX)%MAX];
+		ml+=m[(CUR-i+MAX)%MAX];
+	}
+	xl=xl/T;
+	yl=yl/T;
+	zl=zl/T;
+	ml=ml/T;
+	return ml;
+}
+
+float sensor_data::cal_DC(int T)
+{
+	ml=0;
+	for (int i=0;i<T;i++)
+	{
+		ml+=m[(CUR-i+MAX)%MAX];
+	}
+	ml=ml/T;
+	return ml;
+}
+
+float sensor_data::cal_max(int T)
+{
+	float max=0;
+	float DC=cal_DC(300);
+	for (int i=0;i<T;i++)
+	{
+		max+=abs(m[(CUR-i+MAX)%MAX]-DC);
+	}
+	return max/T;
+}
+
+float sensor_data::cal_de(sensor_data &a)
+{
+	LPF(1000);
+	CUR-=490;
+	CUR=CUR%MAX;
+	a.LPF(20);
+	float x_dc,y_dc,z_dc;
+	x_dc=xl;
+	y_dc=yl;
+	z_dc=zl;
+	float m_dc=sqrt(xl*xl+yl*yl+zl*zl);
+	LPF(20);
+	CUR+=490;
+	CUR=CUR%MAX;
+	float sita=a.xl*x_dc+a.yl*y_dc+a.zl*z_dc,gama=x_dc*xl+y_dc*yl+z_dc*zl;
+	xl=xl-gama*x_dc/m_dc;
+	yl=yl-gama*y_dc/m_dc;
+	zl=zl-gama*z_dc/m_dc;
+	a.xl=a.xl-sita*x_dc/m_dc;
+	a.yl=a.yl-sita*y_dc/m_dc;
+	a.zl=a.zl-sita*z_dc/m_dc;
+	ml=sqrt(xl*xl+yl*yl+zl*zl);
+	a.ml=sqrt(a.xl*a.xl+a.yl*a.yl+a.zl*a.zl);
+	if (ml==0)
+	{
+		return 0;
+	}
+	float arg=acos((xl*a.xl+yl*a.yl+zl*a.zl)/(ml*a.ml));
+	if(x_dc*(-yl*a.zl+a.yl*zl)+y_dc*(-zl*a.xl+a.zl*xl)+z_dc*(-xl*a.yl+a.xl*yl)>=0)return arg;
+	else
+	{
+		 return arg;
+	}
+
+}
+
+#endif

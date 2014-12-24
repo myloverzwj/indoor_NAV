@@ -1,0 +1,245 @@
+package com.modou.loc.module.sensor;
+
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.modou.loc.task.SensorDataTask;
+import com.modou.utils.MLog;
+
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+
+/**
+ * @author 作者 E-mail: xyylchq@163.com
+ * @version 创建时间: 2014-5-24 下午2:39:52
+ * 类说明:
+ * 传感器数据管理类
+ */
+public class SensorMgr {
+
+	private static SensorMgr instance = null;
+	private boolean isCancel;
+	private long locTime; // 定位时间，以后从该时间点上加上周期DELAY_PER,确保时间周期一致
+	
+	private Context mContext;
+	
+	private SensorManager mSensorManager;
+	private List<Sensor> allSensors;
+	
+	private MSensorEventListener gyroscopeListener, accelerometerListener, magneticListener;
+	
+	private SensorMgr() {}
+	
+	/**
+	 * 传感器管理类初始化
+	 * @param ctx
+	 */
+	public void init(Context ctx) {
+		this.mContext = ctx;
+		
+		mSensorManager = (SensorManager) ctx.getSystemService(Context.SENSOR_SERVICE);
+		allSensors = mSensorManager.getSensorList(Sensor.TYPE_ALL);
+		
+		// 注册陀螺仪传感器监听
+		Sensor sensorGyroscope = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+		gyroscopeListener = new MSensorEventListener();
+		mSensorManager.registerListener(gyroscopeListener, sensorGyroscope, SensorManager.SENSOR_DELAY_FASTEST);
+		// 注册加速度传感器监听
+		Sensor sensorAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		accelerometerListener = new MSensorEventListener();
+		mSensorManager.registerListener(accelerometerListener, sensorAccelerometer, SensorManager.SENSOR_DELAY_FASTEST);
+		// 注册磁阻传感器
+		Sensor sensorMagnetic = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+		magneticListener = new MSensorEventListener();
+		mSensorManager.registerListener(magneticListener, sensorMagnetic, SensorManager.SENSOR_DELAY_FASTEST);
+		
+		locTime = System.currentTimeMillis();
+	}
+	
+	/**
+	 * 传感器变化监听类
+	 */
+	class MSensorEventListener implements SensorEventListener {
+
+		private JSONObject preJb = null;
+		private JSONObject jb = null;
+//		private final int DELAY = 10;	// 100Hz频率采取数据
+//		private long preTime = System.currentTimeMillis();
+//		private String curInfo;
+		
+		@Override
+		public void onSensorChanged(SensorEvent event) {
+			if (isCancel())
+				return;
+			
+			/*if (System.currentTimeMillis() - preTime < DELAY) {
+				return;
+			} else {
+				preTime = System.currentTimeMillis();
+			}*/
+			
+			try {
+				preJb = jb;
+				jb = new JSONObject();
+				jb.put("accuracy", event.accuracy);
+				jb.put("timestamp", event.timestamp);
+				jb.put("x_axis", event.values[0]);
+				jb.put("y_axis", event.values[1]);
+				jb.put("z_axis", event.values[2]);
+				
+				jb.put("type", event.sensor.getType());
+				jb.put("version", event.sensor.getVersion());
+				jb.put("maximumRange", event.sensor.getMaximumRange());
+				jb.put("name", event.sensor.getName());
+				jb.put("power", event.sensor.getPower());
+				jb.put("resolution", event.sensor.getResolution());
+				jb.put("vendor", event.sensor.getVendor());
+//				jb.put("fifoMaxEventCount", event.sensor.getFifoMaxEventCount());
+//				jb.put("fifoReservedEventCount", event.sensor.getFifoReservedEventCount());
+//				jb.put("minDelay", event.sensor.getMinDelay());
+				
+//				MLog.d("sensor=====" + jb.toString());
+//				setCurInfo(jb.toString());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		@Override
+		public void onAccuracyChanged(Sensor sensor, int accuracy) {
+			// TODO Auto-generated method stub
+		}
+
+		public synchronized JSONObject getObj() {
+			return preJb;
+		}
+		
+	}
+	
+	/**
+	 * 获取传感器定位数据
+	 * 封装为json数组形式
+	 * @return
+	 */
+	public String getSensorData() {
+		JSONArray jsonArr = new JSONArray();
+		if (gyroscopeListener.getObj() != null) {
+			jsonArr.put(gyroscopeListener.getObj());
+		}
+		if (accelerometerListener.getObj() != null) {
+			jsonArr.put(accelerometerListener.getObj());
+		}
+		if (magneticListener.getObj() != null) {
+			jsonArr.put(magneticListener.getObj());
+		}
+		
+		JSONObject jaRes = new JSONObject();
+		try {
+			locTime += SensorDataTask.DELAY_PER;
+			jaRes.put("cur_time", locTime);
+			jaRes.put("datas", jsonArr);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return jaRes.toString();
+	}
+	
+	/**
+	 * 获取手机支持的传感器信息
+	 * @return
+	 */
+	public String getSupportSensorInfo() {
+		StringBuffer sb = new StringBuffer();
+		try {
+			for (Sensor s : allSensors) {
+				sb.append("传感器类型:");
+				switch (s.getType()) {
+				case Sensor.TYPE_GYROSCOPE:
+					sb.append("陀螺仪传感器");
+					break;
+				case Sensor.TYPE_ACCELEROMETER:
+					sb.append("加速度传感器");
+					break;
+				case Sensor.TYPE_MAGNETIC_FIELD:
+					sb.append("磁阻传感器");
+					break;
+				case Sensor.TYPE_GRAVITY:
+					sb.append("重力传感器");
+					 break;
+				case Sensor.TYPE_LIGHT:
+					sb.append("环境光线传感器");
+					break;
+				case Sensor.TYPE_LINEAR_ACCELERATION:
+					sb.append("线性加速传感器");
+					break;
+				case Sensor.TYPE_ORIENTATION:
+					sb.append("方向传感器");
+					break;
+				case Sensor.TYPE_PRESSURE:
+					sb.append("压力传感器");
+					break;
+				case Sensor.TYPE_PROXIMITY:
+					sb.append("距离传感器");
+					break;
+				case Sensor.TYPE_ROTATION_VECTOR:
+					sb.append("旋转向量ROTATION传感器");
+					break;
+				case Sensor.TYPE_TEMPERATURE:
+					sb.append("温度传感器");
+					break;
+				default:
+					sb.append("未知[" + s.getType() + "]传感器");
+					break;
+				} 
+				
+				sb.append("\n");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return sb.toString();
+	}
+	
+	/**
+	 * 销毁操作
+	 */
+	public void gc() {
+		setCancel(true);
+		unRegister();
+		instance = null;
+	}
+	
+	/**
+	 * 注销传感器监听广播
+	 */
+	private void unRegister() {
+		if (mSensorManager != null) {
+			mSensorManager.unregisterListener(gyroscopeListener);
+			mSensorManager.unregisterListener(accelerometerListener);
+			mSensorManager.unregisterListener(magneticListener);
+		}
+	}
+	
+	public boolean isCancel() {
+		return isCancel;
+	}
+
+	public void setCancel(boolean isCancel) {
+		this.isCancel = isCancel;
+	}
+
+	public static SensorMgr getInstance() {
+		if (instance == null) {
+			instance = new SensorMgr();
+		}
+		return instance;
+	}
+	
+}

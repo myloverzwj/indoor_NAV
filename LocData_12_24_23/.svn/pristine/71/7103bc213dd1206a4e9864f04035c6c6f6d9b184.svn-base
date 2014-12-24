@@ -1,0 +1,88 @@
+package com.modou.fragment;
+
+import java.util.List;
+
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.modou.loc.MainUIActivity;
+import com.modou.loc.R;
+import com.modou.loc.adapter.AroundWifiAdapter;
+import com.modou.loc.entity.WifiEntity;
+import com.modou.loc.receiver.WifiReceiver;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListView;
+
+public class FeatureFragment extends BaseFragment {
+
+	private ListView wifiListView;
+	private AroundWifiAdapter mAdapter;
+	private WifiReceiver wifiReceiver;
+	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		View v = inflater.inflate(R.layout.fragment_feature, container, false);
+		return v;
+	}
+	
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		initView();
+	}
+	
+	@Override
+	public void onResume() {
+		addReceiver();
+		super.onResume();
+	}
+
+	private void addReceiver() {
+		wifiReceiver = new WifiReceiver(getActivity()) {
+			
+			@Override
+			public void scanResults(List<WifiEntity> result) {
+				if (mAdapter == null) {
+					mAdapter = new AroundWifiAdapter(getActivity(), result);
+					wifiListView.setAdapter(mAdapter);
+				} else {
+					mAdapter.resetData(result);
+				}
+			}
+		};
+		
+	}
+
+	private void initView() {
+		wifiListView = (ListView) getView().findViewById(R.id.listview_wifi);
+		setLeftBtnImg(R.drawable.ic_sliding_menu);
+		setRightBtnImg(R.drawable.icon_recommend);
+	}
+	
+	@Override
+	public void onPause() {
+		if (wifiReceiver != null) {
+			getActivity().unregisterReceiver(wifiReceiver);
+			mAdapter = null; // 销毁广播后，将数据适配器也释放掉
+		}
+		super.onPause();
+	}
+
+	@Override
+	public void onClick(View v) {
+		super.onClick(v);
+		
+		int viewId = v.getId();
+		if (viewId == R.id.btn_left) {
+			MainUIActivity mainAty = (MainUIActivity) getActivity();
+			SlidingMenu slidingMenu = mainAty.getSlidingMenu();
+			slidingMenu.showMenu(true);
+		} else if (viewId == R.id.btn_right) {
+			
+		}
+	}
+	
+}

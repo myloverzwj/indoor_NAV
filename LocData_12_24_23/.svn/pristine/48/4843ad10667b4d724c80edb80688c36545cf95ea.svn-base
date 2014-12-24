@@ -1,0 +1,127 @@
+//
+//  main.cpp
+//  wifi
+//
+//  Created by 黄思远 on 14-6-28.
+//  Copyright (c) 2014年 黄思远. All rights reserved.
+//
+#ifndef WIFI_H
+#define WIFI_H
+
+#include <cmath>
+class Locating{
+public:
+	Locating(int n){number=n;avx=0;avy=0;avg=0;l0=-40;}
+    int number;
+    double coordinate[100][2];
+    double value[100];
+    void adddata(float x1,float y1,);
+    void Output();
+    void gx();
+    double g[100][5];
+    void fx();
+    double x;
+    double y;
+    double a;
+    double b[100];
+    double c[100];
+    double avx;
+    double avy;
+    double avg;
+    double l0;
+    void analyse();
+    int d0;
+};
+
+void Locating::fx()
+{
+    a=2;
+    d0=1;
+    for(int i=0;i<number;i++)
+    {
+       g[i][0]=d0*pow(10, (l0-value[i])/(10*a));
+    }
+}
+
+void Locating::gx()
+{
+    for(int i=0;i<number;i++)
+    {
+        g[i][1]=g[i][0]*g[i][0]-coordinate[i][0]*coordinate[i][0]-coordinate[i][1]*coordinate[i][1];
+        avg=avg+g[i][1];
+    }
+    avg=avg/number;
+    for(int i=0;i<number;i++)
+    {
+        avx=avx+coordinate[i][0];
+    }
+    avx=avx/number;
+    for(int i=0;i<number;i++)
+    {
+        avy=avy+coordinate[i][1];
+    }
+    avy=avy/number;
+    for(int i=0;i<number;i++)
+    {
+        b[i]=(g[i][1]-avg)/(2*(avx-coordinate[i][0]));
+        c[i]=(avy-coordinate[i][1])/(avx-coordinate[i][0]);
+    }
+}
+
+void Locating::analyse()
+{
+    double sum1=0;
+    double sum2=0;
+    double sum3=0;
+    double sum4=0;
+    if(number==2)
+    {
+        y=(b[0]-b[1])/(c[0]-c[1]);
+        x=(c[1]*b[0]-c[0]*b[1])/(c[1]-c[0]);
+    }
+    else
+    {
+    for(int i=0;i<number;i++)
+    {
+        sum1=sum1+b[i]*c[i];
+        sum2=sum2+b[i];
+        sum3=sum3+c[i];
+        sum4=sum4+c[i]*c[i];
+    }
+    y=(number*sum1-sum2*sum3)/(number*sum4-sum3*sum3);
+    x=sum2/number-y*(sum3/number);
+
+    }
+}
+
+void Locating::Input()
+{
+
+}
+
+void Locating::Output()
+{
+    /*for(int i=0;i<number;i++)
+    {
+       cout<<g[i][0]<<endl;
+    }
+    for(int i=0;i<number;i++)
+    {
+        cout<<g[i][1]<<endl;
+    }
+    for(int i=0;i<number;i++)
+    {
+        cout<<c[i]<<endl;
+    }
+    for(int i=0;i<number;i++)
+    {
+        cout<<b[i]<<endl;
+    }
+    cout<<avx<<endl;
+    cout<<avy<<endl;
+    cout<<avg<<endl;*/
+    cout<<x<<endl;
+    cout<<y<<endl;
+}
+
+#endif

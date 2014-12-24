@@ -1,0 +1,243 @@
+package com.modou.loc.module.sensor;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import com.modou.utils.MLog;
+import com.modou.utils.StorageUtil;
+
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+
+/**
+ * @author 作者 E-mail: xyylchq@163.com
+ * @version 创建时间: 2014-5-24 下午2:39:52
+ * 类说明:
+ * 传感器数据管理类
+ */
+public class SensorMgr {
+
+	private static SensorMgr instance = null;
+	
+	private Context mContext;
+	
+	private SensorManager mSensorManager;
+	private List<Sensor> allSensors;
+	
+	private final String fileName = "sensor_loc_data";
+	private File file;
+	private BufferedWriter bw = null;
+	private BufferedReader br = null;
+	
+	private SensorMgr() {}
+	
+	public void init(Context ctx) {
+		this.mContext = ctx;
+		try {
+			initFile();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		mSensorManager = (SensorManager) ctx.getSystemService(Context.SENSOR_SERVICE);
+		allSensors = mSensorManager.getSensorList(Sensor.TYPE_ALL);
+		
+		// 注册陀螺仪传感器监听
+		Sensor sensorGyroscope = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+		mSensorManager.registerListener(sensorEventListener, sensorGyroscope, SensorManager.SENSOR_DELAY_NORMAL);
+		// 注册加速度传感器监听
+		Sensor sensorAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		mSensorManager.registerListener(sensorEventListener, sensorAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+		// 注册磁阻传感器
+		Sensor sensorMagnetic = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+		mSensorManager.registerListener(sensorEventListener, sensorMagnetic, SensorManager.SENSOR_DELAY_NORMAL);
+		
+	}
+	
+	private void initFile() throws FileNotFoundException {
+		file = StorageUtil.createFile(fileName, mContext);
+		bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, true)));
+		br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+	}
+
+	private SensorEventListener sensorEventListener = new SensorEventListener() {
+		
+		@Override
+		public void onSensorChanged(SensorEvent event) {
+			try {
+				JSONObject jb = new JSONObject();
+				jb.put("accuracy", event.accuracy);
+				jb.put("timestamp", event.timestamp);
+				jb.put("x_axis", event.values[0]);
+				jb.put("y_axis", event.values[1]);
+				jb.put("z_axis", event.values[2]);
+				
+				jb.put("type", event.sensor.getType());
+//				jb.put("fifoMaxEventCount", event.sensor.getFifoMaxEventCount());
+//				jb.put("fifoReservedEventCount", event.sensor.getFifoReservedEventCount());
+//				jb.put("minDelay", event.sensor.getMinDelay());
+				jb.put("version", event.sensor.getVersion());
+				jb.put("maximumRange", event.sensor.getMaximumRange());
+				jb.put("name", event.sensor.getName());
+				jb.put("power", event.sensor.getPower());
+				jb.put("resolution", event.sensor.getResolution());
+				jb.put("vendor", event.sensor.getVendor());
+				
+				MLog.d("sensor=====" + jb.toString());
+				addRecord(jb.toString());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		@Override
+		public void onAccuracyChanged(Sensor sensor, int accuracy) {
+			// TODO Auto-generated method stub
+		}
+	};
+	
+	/**
+	 * 将扫描到的Sensor信息追加到文本文件中
+	 * @param res	Sensor信息
+	 * @throws IOException 
+	 */
+	private void addRecord(String res) throws IOException {
+		if (res == null || res.length() <= 0)
+			return;
+			
+		if(br.readLine() != null) {
+			bw.newLine();
+		}
+		bw.append(res);
+		bw.flush();
+	}
+	
+	public String getLocData() {
+		JSONArray jsonArr = new JSONArray();
+		JSONObject jb = null;
+		try {
+			for (Sensor s : allSensors) {
+				jb = new JSONObject();
+				jb.put("设备名称", s.getName());
+				jb.put("设备版本", s.getVersion());
+				switch (s.getType()) {
+				case Sensor.TYPE_GYROSCOPE:
+					jb.put("陀螺仪传感器", Sensor.TYPE_GYROSCOPE);
+					break;
+				case Sensor.TYPE_ACCELEROMETER:
+					jb.put("加速度传感器", Sensor.TYPE_ACCELEROMETER);
+					break;
+				case Sensor.TYPE_MAGNETIC_FIELD:
+					jb.put("磁阻传感器", Sensor.TYPE_MAGNETIC_FIELD);
+					break;
+				} 
+				
+				jsonArr.put(jb);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return jsonArr.toString();
+	}
+	
+	public String getSupportSensorInfo() {
+		StringBuffer sb = new StringBuffer();
+		try {
+			for (Sensor s : allSensors) {
+				sb.append("传感器类型:");
+				switch (s.getType()) {
+				case Sensor.TYPE_GYROSCOPE:
+					sb.append("陀螺仪传感器");
+					break;
+				case Sensor.TYPE_ACCELEROMETER:
+					sb.append("加速度传感器");
+					break;
+				case Sensor.TYPE_MAGNETIC_FIELD:
+					sb.append("磁阻传感器");
+					break;
+				case Sensor.TYPE_GRAVITY:
+					sb.append("重力传感器");
+					 break;
+				case Sensor.TYPE_LIGHT:
+					sb.append("环境光线传感器");
+					break;
+				case Sensor.TYPE_LINEAR_ACCELERATION:
+					sb.append("线性加速传感器");
+					break;
+				case Sensor.TYPE_ORIENTATION:
+					sb.append("方向传感器");
+					break;
+				case Sensor.TYPE_PRESSURE:
+					sb.append("压力传感器");
+					break;
+				case Sensor.TYPE_PROXIMITY:
+					sb.append("距离传感器");
+					break;
+				case Sensor.TYPE_ROTATION_VECTOR:
+					sb.append("旋转向量ROTATION传感器");
+					break;
+				case Sensor.TYPE_TEMPERATURE:
+					sb.append("温度传感器");
+					break;
+				default:
+					sb.append("未知[" + s.getType() + "]传感器");
+					break;
+				} 
+				
+				sb.append("\n");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return sb.toString();
+	}
+	
+	private void closeFile() {
+		try {
+			if (br != null) {
+				br.close();
+			}
+			
+			if (bw != null) {
+				bw.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void gc() {
+		unRegister();
+		closeFile();
+	}
+	
+	private void unRegister() {
+		if (mSensorManager != null && sensorEventListener != null) {
+			mSensorManager.unregisterListener(sensorEventListener);
+		}
+	}
+	
+	public static SensorMgr getInstance() {
+		if (instance == null) {
+			instance = new SensorMgr();
+		}
+		return instance;
+	}
+	
+}
