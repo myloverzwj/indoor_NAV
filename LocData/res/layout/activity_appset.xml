@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/activity_bg"
+    android:orientation="vertical" >
+
+    <include layout="@layout/include_title_bar_layer" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <RelativeLayout
+                android:id="@+id/layer_status_bar"
+                style="@style/more_item_panel"
+                android:addStatesFromChildren="true" >
+
+                <TextView
+                    android:id="@+id/txtview_status_bar_title"
+                    style="@style/more_item_txt"
+                    android:text="@string/show_status_bar_info" />
+
+                <TextView
+                    android:id="@+id/txtview_status_bar_status"
+                    style="@style/more_item_small"
+                    android:layout_below="@id/txtview_status_bar_title"
+                    android:text="已禁用" />
+
+                <CheckBox
+                    android:id="@+id/cbox_status_bar"
+                    style="@style/appset_checkbox" />
+            </RelativeLayout>
+
+            <View style="@style/item_splite_line" />
+
+            <RelativeLayout
+                android:id="@+id/layer_app_version"
+                style="@style/more_item_panel"
+                android:addStatesFromChildren="true" >
+
+                <TextView
+                    android:id="@+id/txtview_app_version_title"
+                    style="@style/more_item_txt"
+                    android:text="@string/auto_check_app_update_version" />
+
+                <TextView
+                    android:id="@+id/txtview_app_version_status"
+                    style="@style/more_item_small"
+                    android:layout_below="@id/txtview_app_version_title"
+                    android:text="已禁用" />
+
+                <CheckBox
+                    android:id="@+id/cbox_app_version"
+                    style="@style/appset_checkbox" />
+            </RelativeLayout>
+
+            <View style="@style/item_splite_line" />
+
+            <RelativeLayout
+                android:id="@+id/layer_accept_news"
+                style="@style/more_item_panel"
+                android:addStatesFromChildren="true" >
+
+                <TextView
+                    android:id="@+id/txtview_accept_news_title"
+                    style="@style/more_item_txt"
+                    android:text="@string/accept_news" />
+
+                <TextView
+                    android:id="@+id/txtview_accept_news_status"
+                    style="@style/more_item_small"
+                    android:layout_below="@id/txtview_accept_news_title"
+                    android:text="已禁用" />
+
+                <CheckBox
+                    android:id="@+id/cbox_accept_news"
+                    style="@style/appset_checkbox" />
+            </RelativeLayout>
+
+            <View style="@style/item_splite_line" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

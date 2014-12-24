@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fragment_bg"
+    android:orientation="vertical" >
+
+    <include layout="@layout/include_title_bar_layer" />
+
+    <ScrollView 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            <RelativeLayout
+                android:id="@+id/layer_app_set"
+                style="@style/more_item_panel" >
+                <TextView
+                    style="@style/more_item_txt"
+                    android:text="@string/app_set" />
+            </RelativeLayout>
+            <View style="@style/item_splite_line" />
+            
+            <RelativeLayout
+                android:id="@+id/layer_invite_friends"
+                style="@style/more_item_panel" >
+                <TextView
+                    style="@style/more_item_txt"
+                    android:text="@string/invite_friends" />
+            </RelativeLayout>
+            <View style="@style/item_splite_line" />
+            
+            <RelativeLayout
+                android:id="@+id/layer_check_new_app_version"
+                style="@style/more_item_panel" >
+                <TextView
+                    style="@style/more_item_txt"
+                    android:text="@string/check_new_app_version" />
+            </RelativeLayout>
+            <View style="@style/item_splite_line" />
+            
+            <RelativeLayout
+                android:id="@+id/layer_feedback"
+                style="@style/more_item_panel" >
+                <TextView
+                    style="@style/more_item_txt"
+                    android:text="@string/feedback" />
+            </RelativeLayout>
+            <View style="@style/item_splite_line" />
+            
+            <RelativeLayout
+                android:id="@+id/layer_grade_to_me"
+                style="@style/more_item_panel" >
+                <TextView
+                    style="@style/more_item_txt"
+                    android:text="@string/grade_to_me" />
+            </RelativeLayout>
+            <View style="@style/item_splite_line" />
+            
+            <RelativeLayout
+                android:id="@+id/layer_attention_weixin"
+                style="@style/more_item_panel" >
+                <TextView
+                    android:id="@+id/txtview_weinxin_title"
+                    style="@style/more_item_txt"
+                    android:text="@string/attention_weixin" />
+                <TextView
+                    android:id="@+id/txtview_weixin_num"
+                    style="@style/more_item_small"
+                    android:text="@string/weixin_num"
+                    android:layout_below="@id/txtview_weinxin_title" />
+            </RelativeLayout>
+            <View style="@style/item_splite_line" />
+            
+            <RelativeLayout
+                android:id="@+id/layer_about_app"
+                style="@style/more_item_panel" >
+                <TextView
+                    android:id="@+id/txtview_about_title"
+                    style="@style/more_item_txt"
+                    android:text="@string/about_app" />
+                <TextView
+                    android:id="@+id/txtview_version_name"
+                    style="@style/more_item_small"
+                    android:text="版本号"
+                    android:layout_below="@id/txtview_about_title" />
+            </RelativeLayout>
+            <View style="@style/item_splite_line" />
+            
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
