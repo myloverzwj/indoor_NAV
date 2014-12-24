@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<selector
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:wifilocating="http://schemas.android.com/apk/res-auto">
-    <item android:drawable="@drawable/icon_link" wifilocating:ap_connected="true" />
-    <item android:drawable="@drawable/link_blank" wifilocating:ap_connected="false" />
-</selector>
